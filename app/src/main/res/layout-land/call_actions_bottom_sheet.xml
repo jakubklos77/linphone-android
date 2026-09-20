@@ -199,6 +199,23 @@
             app:layout_constraintTop_toBottomOf="@id/main_actions"
             app:tint="@color/in_call_button_tint_color" />
 
+        <ImageView
+            android:id="@+id/shortcut"
+            android:onClick="@{() -> viewModel.runShortcut()}"
+            android:visibility="@{viewModel.hasShortcut ? View.VISIBLE : View.GONE, default=gone}"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/call_button_size"
+            android:layout_marginTop="@dimen/call_extra_button_top_margin"
+            android:background="@drawable/in_call_button_background_red"
+            android:padding="@dimen/call_button_icon_padding"
+            android:src="@drawable/arrow_square_out"
+            android:contentDescription="@string/call_action_shortcut"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/shortcut_label"
+            app:layout_constraintStart_toStartOf="@id/shortcut_label"
+            app:layout_constraintTop_toBottomOf="@id/main_actions"
+            app:tint="@color/in_call_button_tint_color" />
+
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/in_call_extra_action_label_style"
             android:id="@+id/transfer_label"
@@ -291,9 +308,23 @@
             android:paddingBottom="15dp"
             android:text="@string/call_action_record_call"
             android:labelFor="@id/record_call"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/shortcut_label"
             app:layout_constraintStart_toEndOf="@id/pause_call_label"
             app:layout_constraintTop_toBottomOf="@id/record_call" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/in_call_extra_action_label_style"
+            android:id="@+id/shortcut_label"
+            android:onClick="@{() -> viewModel.runShortcut()}"
+            android:visibility="@{viewModel.hasShortcut ? View.VISIBLE : View.GONE, default=gone}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp"
+            android:text="@{viewModel.shortcutLabel.length() > 0 ? viewModel.shortcutLabel : @string/call_action_shortcut, default=@string/call_action_shortcut}"
+            android:labelFor="@id/shortcut"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/record_call_label"
+            app:layout_constraintTop_toBottomOf="@id/shortcut" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -54,6 +54,7 @@ import org.linphone.databinding.DialogRemoveCallLogsBinding
 import org.linphone.databinding.DialogRemoveConversationHistoryBinding
 import org.linphone.databinding.DialogSetOrEditGroupSubjectBindingImpl
 import org.linphone.databinding.DialogStartGroupCallFromConversationBinding
+import org.linphone.databinding.DialogShortcutManualEntryBinding
 import org.linphone.databinding.DialogUpdateAccountPasswordAfterRegisterFailureBinding
 import org.linphone.databinding.DialogUpdateAccountPasswordBinding
 import org.linphone.databinding.DialogUpdateAvailableBinding
@@ -507,6 +508,23 @@ class DialogUtils {
             val binding: DialogUpdateAccountPasswordBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(context),
                 R.layout.dialog_update_account_password,
+                null,
+                false
+            )
+            binding.viewModel = viewModel
+            binding.lifecycleOwner = context as LifecycleOwner
+
+            return getDialog(context, binding)
+        }
+
+        @UiThread
+        fun getShortcutManualEntryDialog(
+            context: Context,
+            viewModel: ShortcutManualEntryDialogModel
+        ): Dialog {
+            val binding: DialogShortcutManualEntryBinding = DataBindingUtil.inflate(
+                LayoutInflater.from(context),
+                R.layout.dialog_shortcut_manual_entry,
                 null,
                 false
             )

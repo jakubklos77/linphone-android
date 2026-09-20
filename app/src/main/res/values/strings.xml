@@ -455,6 +455,19 @@
     <string name="account_settings_cpim_in_basic_conversations_title">Use CPIM in \"basic\" conversations</string>
     <string name="account_settings_voicemail_uri_title">Voicemail URI</string>
     <string name="account_settings_mwi_uri_title"> MWI server URI (Message Waiting Indicator)</string>
+    <string name="account_settings_wifi_ssid_restriction_title">Restrict to WiFi networks (comma-separated SSIDs, empty = no restriction)</string>
+    <string name="account_settings_shortcut_title">In-call shortcut button</string>
+    <string name="account_settings_select_shortcut">Select shortcut</string>
+    <string name="account_settings_clear_shortcut">Clear</string>
+    <string name="account_settings_shortcut_none_selected">No shortcut selected</string>
+    <string name="account_settings_shortcut_picker_not_found_toast">No app on this device can provide a shortcut</string>
+    <string name="account_settings_configure_shortcut_manually">Configure shortcut manually</string>
+    <string name="account_settings_shortcut_manual_entry_title">Manual shortcut entry</string>
+    <string name="account_settings_shortcut_manual_entry_label_hint">Label</string>
+    <string name="account_settings_shortcut_manual_entry_action_hint">Intent action (e.g. android.intent.action.VIEW)</string>
+    <string name="account_settings_shortcut_manual_entry_data_hint">Intent data URI (optional)</string>
+    <string name="account_settings_shortcut_manual_entry_component_hint">Component package/class (optional)</string>
+    <string name="account_settings_shortcut_manual_entry_invalid_toast">Action and/or component are invalid</string>
     <string name="account_settings_apply_international_prefix_title">Format phone numbers using international prefix</string>
     <string name="account_settings_replace_plus_by_00_title">Replace + by 00 when formatting phone numbers</string>
     <string name="account_settings_update_password_title">Update password</string>
@@ -779,6 +792,8 @@
     <string name="call_action_resume_call">Resume</string>
     <string name="call_action_record_call">Record</string>
     <string name="call_action_stop_record_call">Stop recording</string>
+    <string name="call_action_shortcut">Shortcut</string>
+    <string name="call_action_shortcut_failed_toast">Failed to launch shortcut</string>
     <string name="call_action_hang_up">Hang up</string>
     <string name="call_action_decline">Decline</string>
     <string name="call_action_answer">Answer</string>

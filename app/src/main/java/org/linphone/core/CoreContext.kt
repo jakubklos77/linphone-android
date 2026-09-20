@@ -26,6 +26,7 @@ import android.content.Context
 import android.content.Context.POWER_SERVICE
 import android.content.Context.SENSOR_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -33,6 +34,9 @@ import android.hardware.SensorManager
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
 import android.os.Environment
 import android.os.Handler
 import android.os.HandlerThread
@@ -337,7 +341,12 @@ class CoreContext
             )
             when (currentState) {
                 Call.State.IncomingReceived -> {
-                    if (corePreferences.autoAnswerEnabled) {
+                    if (isCallForbiddenByWifiSsidRestriction(call)) {
+                        Log.w(
+                            "$TAG Call [${call.remoteAddress.asStringUriOnly()}] is for an account restricted to specific WiFi networks and current network doesn't match, declining"
+                        )
+                        call.decline(Reason.Busy)
+                    } else if (corePreferences.autoAnswerEnabled) {
                         val autoAnswerDelay = corePreferences.autoAnswerDelay
                         if (autoAnswerDelay == 0) {
                             Log.w("$TAG Auto answering call immediately")
@@ -1179,6 +1188,68 @@ class CoreContext
         }
 
         call.acceptWithParams(params)
+    }
+
+    @WorkerThread
+    fun isCallForbiddenByWifiSsidRestriction(call: Call): Boolean {
+        val toAddress = call.toAddress
+        val account = core.accountList.find {
+            it.params.identityAddress?.weakEqual(toAddress) == true
+        }
+        val identity = account?.params?.identityAddress?.asStringUriOnly()
+        if (identity == null) {
+            Log.w("$TAG Couldn't find account matching incoming call's to address, skipping WiFi SSID restriction check")
+            return false
+        }
+
+        val allowList = corePreferences.getAccountWifiSsidAllowList(identity)
+            .split(",", ";")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+        if (allowList.isEmpty()) return false
+
+        if (context.checkSelfPermission(
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.w(
+                "$TAG Account [$identity] has a WiFi SSID restriction but ACCESS_FINE_LOCATION isn't granted, letting call through"
+            )
+            return false
+        }
+
+        val connectivityManager = context.applicationContext.getSystemService(
+            Context.CONNECTIVITY_SERVICE
+        ) as? ConnectivityManager
+        val capabilities = connectivityManager?.getNetworkCapabilities(
+            connectivityManager.activeNetwork
+        )
+        val isOnWifi = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+        if (!isOnWifi) {
+            Log.i(
+                "$TAG Account [$identity] has a WiFi SSID restriction and no WiFi network is currently connected, declining"
+            )
+            return true
+        }
+
+        val wifiManager = context.applicationContext.getSystemService(
+            Context.WIFI_SERVICE
+        ) as? WifiManager
+        val currentSsid = wifiManager?.connectionInfo?.ssid?.trim('"')
+        if (currentSsid.isNullOrEmpty() || currentSsid == "<unknown ssid>") {
+            Log.w(
+                "$TAG Account [$identity] has a WiFi SSID restriction and is connected to WiFi, but its name couldn't be read (check Location Services is enabled on the device), letting call through"
+            )
+            return false
+        }
+
+        val allowed = allowList.any { it.equals(currentSsid, ignoreCase = true) }
+        if (!allowed) {
+            Log.i(
+                "$TAG Account [$identity] is restricted to $allowList but current WiFi network is [$currentSsid], declining"
+            )
+        }
+        return !allowed
     }
 
     @WorkerThread

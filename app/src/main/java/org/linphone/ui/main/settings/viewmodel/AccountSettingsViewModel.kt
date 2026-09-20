@@ -92,6 +92,11 @@ class AccountSettingsViewModel
     val mwiUri = MutableLiveData<String>()
     val voicemailUri = MutableLiveData<String>()
 
+    val wifiSsidAllowList = MutableLiveData<String>()
+
+    val shortcutName = MutableLiveData<String>()
+    private var shortcutIntentUri: String = ""
+
     val applyPrefix = MutableLiveData<Boolean>()
     val replacePlusBy00 = MutableLiveData<Boolean>()
 
@@ -124,6 +129,23 @@ class AccountSettingsViewModel
         }
 
         showDeveloperSettings.postValue(corePreferences.showDeveloperSettings)
+    }
+
+    @UiThread
+    fun getShortcutIntentUri(): String {
+        return shortcutIntentUri
+    }
+
+    @UiThread
+    fun setShortcut(name: String, intentUri: String) {
+        shortcutName.value = name
+        shortcutIntentUri = intentUri
+    }
+
+    @UiThread
+    fun clearShortcut() {
+        shortcutName.value = ""
+        shortcutIntentUri = ""
     }
 
     @UiThread
@@ -180,6 +202,12 @@ class AccountSettingsViewModel
 
                 mwiUri.postValue(params.mwiServerAddress?.asStringUriOnly().orEmpty())
                 voicemailUri.postValue(params.voicemailAddress?.asStringUriOnly().orEmpty())
+
+                val identityUri = params.identityAddress?.asStringUriOnly().orEmpty()
+                wifiSsidAllowList.postValue(corePreferences.getAccountWifiSsidAllowList(identityUri))
+
+                shortcutIntentUri = corePreferences.getAccountShortcutIntentUri(identityUri)
+                shortcutName.postValue(corePreferences.getAccountShortcutName(identityUri))
 
                 applyPrefix.postValue(params.useInternationalPrefixForCallsAndChats)
                 replacePlusBy00.postValue(params.isDialEscapePlusEnabled)
@@ -300,6 +328,18 @@ class AccountSettingsViewModel
                 } else {
                     newParams.voicemailAddress = null
                 }
+
+                val identityUri = account.params.identityAddress?.asStringUriOnly().orEmpty()
+                corePreferences.setAccountWifiSsidAllowList(
+                    identityUri,
+                    wifiSsidAllowList.value.orEmpty().trim()
+                )
+
+                corePreferences.setAccountShortcut(
+                    identityUri,
+                    shortcutIntentUri,
+                    shortcutName.value.orEmpty()
+                )
 
                 val expire = expire.value.orEmpty()
                 val expireInt = if (expire.isEmpty()) {

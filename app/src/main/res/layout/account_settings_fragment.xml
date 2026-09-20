@@ -15,6 +15,15 @@
             name="outboundProxyTooltipClickListener"
             type="View.OnClickListener" />
         <variable
+            name="selectShortcutClickListener"
+            type="View.OnClickListener" />
+        <variable
+            name="clearShortcutClickListener"
+            type="View.OnClickListener" />
+        <variable
+            name="manualShortcutClickListener"
+            type="View.OnClickListener" />
+        <variable
             name="viewModel"
             type="org.linphone.ui.main.settings.viewmodel.AccountSettingsViewModel" />
     </data>
@@ -209,8 +218,93 @@
                             app:layout_constraintWidth_max="@dimen/text_input_max_width"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/mwi_uri_title"
+                            app:layout_constraintTop_toBottomOf="@id/mwi_uri_title"/>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/settings_title_padding_style"
+                            android:id="@+id/wifi_ssid_allow_list_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/account_settings_wifi_ssid_restriction_title"
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            android:labelFor="@id/wifi_ssid_allow_list"
+                            app:layout_constraintTop_toBottomOf="@id/mwi_uri"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            style="@style/default_text_style"
+                            android:id="@+id/wifi_ssid_allow_list"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:text="@={viewModel.wifiSsidAllowList}"
+                            android:inputType="text"
+                            android:hint="@string/account_settings_wifi_ssid_restriction_title"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintWidth_max="@dimen/text_input_max_width"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/wifi_ssid_allow_list_title"/>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/settings_title_padding_style"
+                            android:id="@+id/shortcut_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/account_settings_shortcut_title"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:labelFor="@id/shortcut_name"
+                            app:layout_constraintTop_toBottomOf="@id/wifi_ssid_allow_list"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/default_text_style"
+                            android:id="@+id/shortcut_name"
+                            android:onClick="@{selectShortcutClickListener}"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:background="@drawable/edit_text_background"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:gravity="center_vertical"
+                            android:text="@{viewModel.shortcutName.length() > 0 ? viewModel.shortcutName : @string/account_settings_shortcut_none_selected}"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintWidth_max="@dimen/text_input_max_width"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/clear_shortcut"
+                            app:layout_constraintTop_toBottomOf="@id/shortcut_title"
                             app:layout_constraintBottom_toTopOf="@id/apply_international_switch"/>
+
+                        <ImageView
+                            android:id="@+id/clear_shortcut"
+                            android:onClick="@{clearShortcutClickListener}"
+                            android:visibility="@{viewModel.shortcutName.length() > 0 ? View.VISIBLE : View.GONE}"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="16dp"
+                            android:padding="15dp"
+                            android:src="@drawable/x"
+                            android:contentDescription="@string/account_settings_clear_shortcut"
+                            app:tint="?attr/color_main2_600"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/shortcut_name"
+                            app:layout_constraintBottom_toBottomOf="@id/shortcut_name"/>
 
                         <androidx.appcompat.widget.AppCompatTextView
                             style="@style/settings_title_style"
@@ -236,7 +330,7 @@
                             android:layout_marginTop="20dp"
                             android:layout_marginEnd="16dp"
                             android:checked="@={viewModel.applyPrefix}"
-                            app:layout_constraintTop_toBottomOf="@id/mwi_uri"
+                            app:layout_constraintTop_toBottomOf="@id/shortcut_name"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toTopOf="@id/replace_plus_by_00_switch"/>
 
@@ -333,6 +427,7 @@
                         layout="@layout/account_advanced_settings"
                         bind:updatePasswordClickListener="@{updatePasswordClickListener}"
                         bind:outboundProxyTooltipClickListener="@{outboundProxyTooltipClickListener}"
+                        bind:manualShortcutClickListener="@{manualShortcutClickListener}"
                         bind:viewModel="@{viewModel}"
                         app:layout_constraintWidth_max="@dimen/section_max_width"
                         app:layout_constraintEnd_toEndOf="parent"

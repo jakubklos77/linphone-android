@@ -519,6 +519,32 @@ class CorePreferences
             config.setBool("app", "mdm_configured", value)
         }
 
+    @AnyThread
+    fun getAccountWifiSsidAllowList(identity: String): String {
+        return config.getString("account_wifi_ssid_allow_list", identity, "").orEmpty()
+    }
+
+    @WorkerThread
+    fun setAccountWifiSsidAllowList(identity: String, ssidList: String) {
+        config.setString("account_wifi_ssid_allow_list", identity, ssidList)
+    }
+
+    @AnyThread
+    fun getAccountShortcutIntentUri(identity: String): String {
+        return config.getString("account_shortcut_intent_uri", identity, "").orEmpty()
+    }
+
+    @AnyThread
+    fun getAccountShortcutName(identity: String): String {
+        return config.getString("account_shortcut_name", identity, "").orEmpty()
+    }
+
+    @WorkerThread
+    fun setAccountShortcut(identity: String, intentUri: String, name: String) {
+        config.setString("account_shortcut_intent_uri", identity, intentUri)
+        config.setString("account_shortcut_name", identity, name)
+    }
+
     @UiThread
     fun copyAssetsFromPackage() {
         copy("linphonerc_default", configPath)

@@ -22,6 +22,7 @@ package org.linphone.ui.call.viewmodel
 import android.Manifest
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.annotation.AnyThread
 import androidx.annotation.UiThread
@@ -137,6 +138,12 @@ class CurrentCallViewModel
     val isZrtp = MutableLiveData<Boolean>()
 
     val isZrtpSasValidationRequired = MutableLiveData<Boolean>()
+
+    val hasShortcut = MutableLiveData<Boolean>()
+
+    val shortcutLabel = MutableLiveData<String>()
+
+    private var shortcutIntentUri: String = ""
 
     val waitingForEncryptionInfo = MutableLiveData<Boolean>()
 
@@ -877,6 +884,21 @@ class CurrentCallViewModel
     }
 
     @UiThread
+    fun runShortcut() {
+        val uri = shortcutIntentUri
+        if (uri.isEmpty()) return
+
+        try {
+            val intent = Intent.parseUri(uri, Intent.URI_INTENT_SCHEME)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            coreContext.context.startActivity(intent)
+        } catch (e: Exception) {
+            Log.e("$TAG Failed to launch shortcut [$uri]: $e")
+            showRedToast(R.string.call_action_shortcut_failed_toast, R.drawable.warning_circle)
+        }
+    }
+
+    @UiThread
     fun togglePause() {
         coreContext.postOnCoreThread {
             if (::currentCall.isInitialized) {
@@ -1077,6 +1099,18 @@ class CurrentCallViewModel
 
         terminatedByUser = false
         currentCall = call
+
+        val callAccountIdentity = call.params.account?.params?.identityAddress?.asStringUriOnly()
+        if (callAccountIdentity != null) {
+            val name = corePreferences.getAccountShortcutName(callAccountIdentity)
+            shortcutIntentUri = corePreferences.getAccountShortcutIntentUri(callAccountIdentity)
+            shortcutLabel.postValue(name)
+            hasShortcut.postValue(name.isNotEmpty() && shortcutIntentUri.isNotEmpty())
+        } else {
+            shortcutIntentUri = ""
+            hasShortcut.postValue(false)
+        }
+
         callStatsModel.update(call, call.audioStats)
         callMediaEncryptionModel.update(call)
         call.addListener(callListener)
