@@ -1,6 +1,6 @@
 # Custom features (this fork)
 
-Two per-account features were added on top of upstream Linphone. Both are configured from **Settings → Accounts → (pick account) → Account settings**.
+Several per-account features were added on top of upstream Linphone. Both are configured from **Settings → Accounts → (pick account) → Account settings**.
 
 ## 1. Restrict account to specific WiFi network(s)
 
@@ -30,6 +30,14 @@ Two ways to configure it:
   ```
 
 - Implementation: storage in `CorePreferences.kt` (`account_shortcut_intent_uri` / `account_shortcut_name` config keys, as a serialized `Intent.toUri(URI_INTENT_SCHEME)` string), settings UI in `ui/main/settings/fragment/AccountSettingsFragment.kt` + `ShortcutManualEntryDialogModel.kt`, call-screen button + launch logic in `ui/call/viewmodel/CurrentCallViewModel.kt` (`runShortcut()`), portrait layout `layout/call_actions_bottom_sheet.xml`, landscape/tablet layout `layout-land/call_actions_bottom_sheet.xml`.
+
+## 3. Intercom mode
+
+Switch: `Intercom mode`, in the account's `Advanced settings` section. Meant for door-station / intercom accounts, together with the in-call shortcut button above.
+
+- Calls (incoming and outgoing) on that account never switch to full-screen mode automatically when video starts, so the bottom action panel stays visible. Tapping the video still toggles full screen manually.
+- Every time the active-call screen is shown, the bottom action panel is expanded, so the shortcut button is one tap away right after answering.
+- Implementation: storage in `CorePreferences.kt` (`account_intercom_mode` config key, keyed by account SIP identity), full-screen suppression in `CurrentCallViewModel.updateVideoDirection()`, panel expansion in `ActiveCallFragment.expandActionsBottomSheetIfIntercomMode()`.
 
 # CONTRIBUTIONS
 

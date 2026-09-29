@@ -234,6 +234,10 @@ class ActiveCallFragment : GenericCallFragment() {
             callMediaEncryptionStatsBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
+        callViewModel.isIntercomMode.observe(viewLifecycleOwner) {
+            expandActionsBottomSheetIfIntercomMode()
+        }
+
         callViewModel.isPausedByRemote.observe(viewLifecycleOwner) { paused ->
             if (paused) {
                 if (callViewModel.fullScreenMode.value == true) {
@@ -401,6 +405,8 @@ class ActiveCallFragment : GenericCallFragment() {
             callViewModel.updateCallDuration()
         }
 
+        expandActionsBottomSheetIfIntercomMode()
+
         if (callViewModel.isZrtpAlertDialogVisible) {
             Log.i("$TAG Fragment resuming, showing ZRTP alert dialog")
             showZrtpAlertDialog()
@@ -417,6 +423,21 @@ class ActiveCallFragment : GenericCallFragment() {
         zrtpSasDialog = null
 
         cleanVideoPreview(binding.localPreviewVideoSurface)
+    }
+
+    private fun expandActionsBottomSheetIfIntercomMode() {
+        if (callViewModel.isIntercomMode.value != true) return
+
+        val actionsBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomBar.root)
+        if (actionsBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) return
+
+        Log.i("$TAG Call's account is in intercom mode, expanding actions bottom sheet")
+        val drawable = AnimatedVectorDrawableCompat.create(
+            requireContext(),
+            R.drawable.animated_handle_to_caret
+        )
+        binding.bottomBar.mainActions.callActionsHandle.setImageDrawable(drawable)
+        actionsBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun updateHingeRelatedConstraints(feature: FoldingFeature) {

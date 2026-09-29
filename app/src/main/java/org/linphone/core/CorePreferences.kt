@@ -545,6 +545,16 @@ class CorePreferences
         config.setString("account_shortcut_name", identity, name)
     }
 
+    @AnyThread
+    fun getAccountIntercomMode(identity: String): Boolean {
+        return config.getBool("account_intercom_mode", identity, false)
+    }
+
+    @WorkerThread
+    fun setAccountIntercomMode(identity: String, enabled: Boolean) {
+        config.setBool("account_intercom_mode", identity, enabled)
+    }
+
     @UiThread
     fun copyAssetsFromPackage() {
         copy("linphonerc_default", configPath)

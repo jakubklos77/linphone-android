@@ -97,6 +97,8 @@ class AccountSettingsViewModel
     val shortcutName = MutableLiveData<String>()
     private var shortcutIntentUri: String = ""
 
+    val intercomMode = MutableLiveData<Boolean>()
+
     val applyPrefix = MutableLiveData<Boolean>()
     val replacePlusBy00 = MutableLiveData<Boolean>()
 
@@ -208,6 +210,8 @@ class AccountSettingsViewModel
 
                 shortcutIntentUri = corePreferences.getAccountShortcutIntentUri(identityUri)
                 shortcutName.postValue(corePreferences.getAccountShortcutName(identityUri))
+
+                intercomMode.postValue(corePreferences.getAccountIntercomMode(identityUri))
 
                 applyPrefix.postValue(params.useInternationalPrefixForCallsAndChats)
                 replacePlusBy00.postValue(params.isDialEscapePlusEnabled)
@@ -340,6 +344,8 @@ class AccountSettingsViewModel
                     shortcutIntentUri,
                     shortcutName.value.orEmpty()
                 )
+
+                corePreferences.setAccountIntercomMode(identityUri, intercomMode.value == true)
 
                 val expire = expire.value.orEmpty()
                 val expireInt = if (expire.isEmpty()) {

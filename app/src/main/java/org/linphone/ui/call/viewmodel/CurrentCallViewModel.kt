@@ -145,6 +145,10 @@ class CurrentCallViewModel
 
     private var shortcutIntentUri: String = ""
 
+    val isIntercomMode = MutableLiveData<Boolean>()
+
+    private var intercomMode: Boolean = false
+
     val waitingForEncryptionInfo = MutableLiveData<Boolean>()
 
     val isMediaEncrypted = MutableLiveData<Boolean>()
@@ -1106,9 +1110,16 @@ class CurrentCallViewModel
             shortcutIntentUri = corePreferences.getAccountShortcutIntentUri(callAccountIdentity)
             shortcutLabel.postValue(name)
             hasShortcut.postValue(name.isNotEmpty() && shortcutIntentUri.isNotEmpty())
+            intercomMode = corePreferences.getAccountIntercomMode(callAccountIdentity)
         } else {
             shortcutIntentUri = ""
             hasShortcut.postValue(false)
+            intercomMode = false
+        }
+        isIntercomMode.postValue(intercomMode)
+        if (intercomMode && fullScreenMode.value == true) {
+            Log.i("$TAG Call's account is in intercom mode, leaving full screen mode")
+            fullScreenMode.postValue(false)
         }
 
         callStatsModel.update(call, call.audioStats)
@@ -1376,7 +1387,11 @@ class CurrentCallViewModel
 
         if (currentCall.conference == null) { // Let conference view model handle full screen while in conference
             if (isReceiving && !wasReceiving) { // Do not change full screen mode base on our video being sent when it wasn't
-                if (fullScreenMode.value != true) {
+                if (intercomMode) {
+                    Log.i(
+                        "$TAG Video is being received but call's account is in intercom mode, not switching to full-screen mode"
+                    )
+                } else if (fullScreenMode.value != true) {
                     Log.i(
                         "$TAG Video is being received or sent (and it wasn't before), switching to full-screen mode"
                     )

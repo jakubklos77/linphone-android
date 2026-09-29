@@ -433,7 +433,45 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lime_algo_list"
-            app:layout_constraintBottom_toTopOf="@id/manual_shortcut_entry"/>
+            app:layout_constraintBottom_toTopOf="@id/intercom_mode_switch"/>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            style="@style/material_switch_style"
+            android:id="@+id/intercom_mode_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="16dp"
+            android:checked="@={viewModel.intercomMode}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/update_password" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/settings_title_style"
+            android:id="@+id/intercom_mode_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/account_settings_intercom_mode_title"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:labelFor="@id/intercom_mode_switch"
+            app:layout_constraintTop_toTopOf="@id/intercom_mode_switch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/intercom_mode_switch"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/settings_subtitle_style"
+            android:id="@+id/intercom_mode_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/account_settings_intercom_mode_subtitle"
+            app:layout_constraintTop_toBottomOf="@id/intercom_mode_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/intercom_mode_switch"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/settings_title_style"
@@ -442,6 +480,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            android:layout_marginTop="20dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="@dimen/screen_bottom_margin"
@@ -456,7 +495,7 @@
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/update_password"
+            app:layout_constraintTop_toBottomOf="@id/intercom_mode_subtitle"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
