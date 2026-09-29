@@ -469,7 +469,7 @@
     <string name="account_settings_shortcut_manual_entry_component_hint">Component package/class (optional)</string>
     <string name="account_settings_shortcut_manual_entry_invalid_toast">Action and/or component are invalid</string>
     <string name="account_settings_intercom_mode_title">Intercom mode</string>
-    <string name="account_settings_intercom_mode_subtitle">Does not hide the bottom panel during calls and expands it once the call is answered</string>
+    <string name="account_settings_intercom_mode_subtitle">Keeps the call panel visible and expanded, and shows the early-media video (e.g. door camera) as soon as the call arrives</string>
     <string name="account_settings_apply_international_prefix_title">Format phone numbers using international prefix</string>
     <string name="account_settings_replace_plus_by_00_title">Replace + by 00 when formatting phone numbers</string>
     <string name="account_settings_update_password_title">Update password</string>

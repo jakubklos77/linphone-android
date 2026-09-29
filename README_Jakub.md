@@ -37,7 +37,9 @@ Switch: `Intercom mode`, in the account's `Advanced settings` section. Meant for
 
 - Calls (incoming and outgoing) on that account never switch to full-screen mode automatically when video starts, so the bottom action panel stays visible. Tapping the video still toggles full screen manually.
 - Every time the active-call screen is shown, the bottom action panel is expanded, so the shortcut button is one tap away right after answering.
-- Implementation: storage in `CorePreferences.kt` (`account_intercom_mode` config key, keyed by account SIP identity), full-screen suppression in `CurrentCallViewModel.updateVideoDirection()`, panel expansion in `ActiveCallFragment.expandActionsBottomSheetIfIntercomMode()`.
+- When an incoming call on that account sends early media (requires the global `Allow early media` call setting), the call screen is opened right away so the early-media video (e.g. door camera) is shown before answering — even when the device is unlocked, not only on the lock screen.
+  - If Linphone is in foreground this always works. If another app (or the home screen) is in foreground, Android blocks it unless Linphone is granted **Display over other apps** (Android settings → Apps → Linphone); without it you just get the regular heads-up notification (tap its body to open the call screen).
+- Implementation: storage in `CorePreferences.kt` (`account_intercom_mode` config key, keyed by account SIP identity), full-screen suppression in `CurrentCallViewModel.updateVideoDirection()`, panel expansion in `ActiveCallFragment.expandActionsBottomSheetIfIntercomMode()`, early-media call screen launch in `CoreContext` (`Call.State.IncomingEarlyMedia` handler), `SYSTEM_ALERT_WINDOW` permission in `AndroidManifest.xml`.
 
 # CONTRIBUTIONS
 

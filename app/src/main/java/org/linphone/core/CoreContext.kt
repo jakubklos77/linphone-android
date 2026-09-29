@@ -371,6 +371,16 @@ class CoreContext
                             Log.w("$TAG No speaker device found, incoming call early media ringing will be played on default device")
                         }
                     }
+
+                    val identity = getIncomingCallAccountIdentity(call)
+                    if (identity != null && corePreferences.getAccountIntercomMode(identity)) {
+                        Log.i(
+                            "$TAG Incoming early-media call for account [$identity] in intercom mode, showing call activity"
+                        )
+                        postOnMainThread {
+                            showCallActivity()
+                        }
+                    }
                 }
                 Call.State.OutgoingInit -> {
                     val conferenceInfo = core.findConferenceInformationFromUri(call.remoteAddress)
@@ -1190,12 +1200,17 @@ class CoreContext
     }
 
     @WorkerThread
-    fun isCallForbiddenByWifiSsidRestriction(call: Call): Boolean {
+    private fun getIncomingCallAccountIdentity(call: Call): String? {
         val toAddress = call.toAddress
         val account = core.accountList.find {
             it.params.identityAddress?.weakEqual(toAddress) == true
         }
-        val identity = account?.params?.identityAddress?.asStringUriOnly()
+        return account?.params?.identityAddress?.asStringUriOnly()
+    }
+
+    @WorkerThread
+    fun isCallForbiddenByWifiSsidRestriction(call: Call): Boolean {
+        val identity = getIncomingCallAccountIdentity(call)
         if (identity == null) {
             Log.w("$TAG Couldn't find account matching incoming call's to address, skipping WiFi SSID restriction check")
             return false
