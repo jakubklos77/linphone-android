@@ -1529,7 +1529,6 @@ class CurrentCallViewModel
         params.account = account
 
         val chatParams = params.chatParams ?: return null
-        chatParams.ephemeralLifetime = 0 // Make sure ephemeral is disabled by default
 
         val sameDomain = remoteAddress.domain == corePreferences.defaultDomain && remoteAddress.domain == account.params.domain
         if (account.params.instantMessagingEncryptionMandatory && sameDomain) {
