@@ -5,13 +5,28 @@
     "context": ".."
   },
   "remoteUser": "bc",
-  "postCreateCommand": "chmod +x ./gradlew && ./gradlew --version",
+  // Mount the workspace at the same path as on the host, so Claude Code keys
+  // its sessions/memory for this project identically inside and outside.
+  "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
+  "workspaceFolder": "${localWorkspaceFolder}",
+  "mounts": [
+    "source=${localEnv:HOME}/.android/debug.keystore,target=/home/bc/.android/debug.keystore,type=bind,readonly",
+    // Share the host's Claude Code config dir (credentials, settings, memory).
+    "source=${localEnv:HOME}/.claude,target=/home/bc/.claude,type=bind"
+  ],
+  "containerEnv": {
+    // Keeps the global config (.claude.json) inside the mounted dir as well,
+    // so it survives rebuilds without bind-mounting a single file.
+    "CLAUDE_CONFIG_DIR": "/home/bc/.claude"
+  },
+  "postCreateCommand": "chmod +x ./gradlew && ./gradlew --version && keytool -list -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey | grep 'SHA-256'",
   "customizations": {
     "vscode": {
       "extensions": [
         "vscjava.vscode-gradle",
         "redhat.java",
-        "fwcd.kotlin"
+        "fwcd.kotlin",
+        "anthropic.claude-code"
       ]
     }
   }

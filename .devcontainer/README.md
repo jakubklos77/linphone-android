@@ -28,6 +28,20 @@ checkout's current `compileSdk`/`targetSdk` (`app/build.gradle.kts`).
    ./gradlew assembleDebug
    ```
    Output: `app/build/outputs/apk/debug/`.
+
+   Debug builds are signed with the **host's** `~/.android/debug.keystore`,
+   bind-mounted read-only into the container (see `mounts` in
+   `devcontainer.json`), so APKs built inside and outside the container share
+   the same signature and can be installed over each other. The file must
+   exist on the host before the container is created (Docker refuses a
+   missing bind-mount source); `postCreateCommand` prints its SHA-256
+   fingerprint.
+
+   Claude Code: the `anthropic.claude-code` extension is installed in the
+   container, and the host's `~/.claude` is bind-mounted with
+   `CLAUDE_CONFIG_DIR` pointing at it, so the host login, settings and
+   memory are reused and survive rebuilds. The workspace is mounted at the
+   same path as on the host so per-project sessions/memory line up.
 4. Install to a connected/emulated device (needs `adb`, not included in this
    image — run from the host, or add `platform-tools`' `adb` usage via a
    forwarded USB/emulator setup if you need on-device testing from inside

@@ -67,5 +67,10 @@ RUN useradd -ms /bin/bash $USERNAME && \
 
 USER $USERNAME
 WORKDIR /home/$USERNAME
+
+# Pre-create ~/.android as the container user: devcontainer.json bind-mounts the
+# host's debug.keystore into it, and Docker would otherwise create the parent
+# directory as root, leaving it unwritable for AGP/adb.
+RUN mkdir -p /home/$USERNAME/.android
 ENV PS1='\[\e[34m\]\u@linphone-android-devcontainer>\[\e[0m\] '
 CMD ["bash"]
