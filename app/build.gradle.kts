@@ -106,7 +106,9 @@ android {
         applicationId = packageName
         minSdk = 28
         targetSdk = 37
-        versionCode = 602008 // 6.02.008
+        // Fork: offset by 1_000_000_000 so Google Play's org.linphone (6.02.008 -> 602008)
+        // never has a higher versionCode than this build. Max allowed is 2_100_000_000.
+        versionCode = 1_000_602_008 // 6.02.008
         versionName = "6.3.0-alpha"
 
         manifestPlaceholders["appAuthRedirectScheme"] = packageName
